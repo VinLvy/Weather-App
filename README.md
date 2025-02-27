@@ -22,17 +22,59 @@ This project is a simple weather application that fetches and displays real-time
 4. Use the unit toggle to switch between Celsius and Fahrenheit.
 
 ## Code Overview
-### `getWeather(location)`
-Fetches weather data from the Visual Crossing API and extracts the location, temperature, and condition.
+### Fetching Weather Data
+The function `getWeather(location)` fetches weather data from the Visual Crossing API and extracts the location, temperature, and condition:
+```javascript
+async function getWeather(location) {
+    const response = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?unitGroup=metric&key=${apiKey}&contentType=json`);
+    if (!response.ok) throw new Error("Network response was not ok");
+    const data = await response.json();
+    return {
+        location: data.resolvedAddress,
+        temperatureC: data.currentConditions.temp,
+        temperatureF: (data.currentConditions.temp * 9 / 5) + 32,
+        condition: data.currentConditions.conditions
+    };
+}
+```
 
-### `displayWeather()`
-Displays the weather data, including temperature, condition, and an appropriate weather icon. It also updates the background based on the weather condition.
+### Displaying Weather Data
+The function `displayWeather()` updates the webpage with the retrieved weather data:
+```javascript
+function displayWeather() {
+    if (!currentWeatherData) return;
+    const unitToggle = document.getElementById("unitToggle");
+    const temperature = unitToggle.checked
+        ? `${currentWeatherData.temperatureF.toFixed(1)} °F`
+        : `${currentWeatherData.temperatureC.toFixed(1)} °C`;
+    document.getElementById("weatherDisplay").innerHTML = `
+        <h2>${currentWeatherData.location}</h2>
+        <p class="temp">${temperature}</p>
+        <div class="weather-info">
+            <img src="../img/${getWeatherIcon(currentWeatherData.condition)}" alt="${currentWeatherData.condition}">
+            <p>${currentWeatherData.condition}</p>
+        </div>
+    `;
+    changeBackground(currentWeatherData.condition);
+}
+```
 
 ### `getWeatherIcon(condition)`
 Returns the corresponding weather icon filename based on the weather condition.
 
-### `changeBackground(condition)`
-Changes the webpage background dynamically according to the weather condition.
+### Setting the Background
+The function `changeBackground(condition)` modifies the webpage's background dynamically based on the weather condition:
+```javascript
+function changeBackground(condition) {
+    let bgColor;
+    if (condition.includes("Clear")) bgColor = "linear-gradient(to right, #FFD700, #FF4500)";
+    else if (condition.includes("Cloudy")) bgColor = "linear-gradient(to right, #B0C4DE, #708090)";
+    else if (condition.includes("Rain")) bgColor = "linear-gradient(to right, #4682B4, #1E90FF)";
+    else if (condition.includes("Snow")) bgColor = "linear-gradient(to right, #E0FFFF, #ADD8E6)";
+    else bgColor = "linear-gradient(to right, #87CEFA, #4682B4)";
+    document.body.style.background = bgColor;
+}
+```
 
 ## Dependencies
 - Visual Crossing Weather API
