@@ -1,16 +1,19 @@
-const apiKey = "T5BUYQ9GK65XWCEV365P2KTAD"; // Replace with your Visual Crossing API key
+const apiKey = "T5BUYQ9GK65XWCEV365P2KTAD"; // Your API key Visual Crossing
+
+let currentWeatherData = null;
 
 document.getElementById("weatherForm").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const location = document.getElementById("locationInput").value;
-    if (location.trim() === "") return;
+    const location = document.getElementById("locationInput").value.trim();
+    if (!location) return;
 
     document.getElementById("loading").style.display = "block";
     document.getElementById("weatherDisplay").innerHTML = "";
 
     try {
         const weatherData = await getWeather(location);
-        displayWeather(weatherData);
+        currentWeatherData = weatherData;
+        displayWeather();
     } catch (error) {
         document.getElementById("weatherDisplay").innerHTML = "<p>Failed to fetch weather data.</p>";
     } finally {
@@ -26,52 +29,39 @@ async function getWeather(location) {
         location: data.resolvedAddress,
         temperatureC: data.currentConditions.temp,
         temperatureF: (data.currentConditions.temp * 9 / 5) + 32,
-        condition: data.currentConditions.conditions,
-        icon: data.currentConditions.icon
+        condition: data.currentConditions.conditions
     };
 }
 
-function displayWeather(weather) {
+function displayWeather() {
+    if (!currentWeatherData) return;
+
     const unitToggle = document.getElementById("unitToggle");
-    const temperature = unitToggle.checked ? `${weather.temperatureF.toFixed(1)} °F` : `${weather.temperatureC.toFixed(1)} °C`;
-
-    let iconFileName = "unknown.png";
-    if (weather.condition.includes("Sunny") || weather.condition.includes("Clear")) iconFileName = "sunny.png";
-    else if (weather.condition.includes("Cloudy") || weather.condition.includes("Partially Cloudy")) iconFileName = "cloudy.png";
-    else if (weather.condition.includes("Rain") || weather.condition.includes("Showers")) iconFileName = "rainy.png";
-    else if (weather.condition.includes("Thunderstorm")) iconFileName = "storm.png";
-    else if (weather.condition.includes("Snow")) iconFileName = "snowy.png";
-
-    const iconUrl = `../img/${iconFileName}`;
+    const temperature = unitToggle.checked
+        ? `${currentWeatherData.temperatureF.toFixed(1)} °F`
+        : `${currentWeatherData.temperatureC.toFixed(1)} °C`;
 
     document.getElementById("weatherDisplay").innerHTML = `
-        <h2>${weather.location}</h2>
+        <h2>${currentWeatherData.location}</h2>
         <p class="temp">${temperature}</p>
         <div class="weather-info">
-            <img src="${iconUrl}" alt="${weather.condition}">
-            <p>${weather.condition}</p>
+            <img src="../img/${getWeatherIcon(currentWeatherData.condition)}" alt="${currentWeatherData.condition}">
+            <p>${currentWeatherData.condition}</p>
         </div>
     `;
 
-    changeBackground(weather.condition);
+    changeBackground(currentWeatherData.condition);
 }
 
-document.getElementById("unitToggle").addEventListener("change", () => {
-    const weatherDisplay = document.getElementById("weatherDisplay");
-    if (weatherDisplay.innerHTML.trim() !== "") {
-        displayWeather(getCurrentWeatherData());
-    }
-});
+document.getElementById("unitToggle").addEventListener("change", displayWeather);
 
-function getCurrentWeatherData() {
-    const weatherDisplay = document.getElementById("weatherDisplay");
-    return {
-        location: weatherDisplay.querySelector("h2").innerText,
-        temperatureC: parseFloat(weatherDisplay.querySelector("p").innerText),
-        temperatureF: parseFloat(weatherDisplay.querySelector("p").innerText) * 9 / 5 + 32,
-        condition: weatherDisplay.querySelectorAll("p")[1].innerText,
-        icon: weatherDisplay.querySelector("img").src.split("/").pop()
-    };
+function getWeatherIcon(condition) {
+    if (condition.includes("Sunny") || condition.includes("Clear")) return "sunny.png";
+    if (condition.includes("Rain") || condition.includes("Showers")) return "rainy.png";
+    if (condition.includes("Cloudy") || condition.includes("Partially cloudy") || condition.includes("Overcast")) return "cloudy.png";
+    if (condition.includes("Thunderstorm")) return "storm.png";
+    if (condition.includes("Snow")) return "snowy.png";
+    return "unknown.png";
 }
 
 function changeBackground(condition) {

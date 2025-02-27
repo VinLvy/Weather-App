@@ -29,13 +29,14 @@ input {
 }
 
 button {
-    width: 100%;
+    margin-top: 10px;
+    width: 96%;
     padding: 12px;
     border: none;
     background: #007BFF;
     color: white;
     font-size: 16px;
-    border-radius: 6px;
+    border-radius: 20px;
     cursor: pointer;
     transition: background 0.3s;
 }
@@ -44,15 +45,13 @@ button:hover {
     background: #0056b3;
 }
 
-/* Loader */
 #loading {
     display: none;
     font-size: 18px;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 30px;
 }
 
-/* Toggle Switch */
 .toggle {
     display: flex;
     justify-content: center;
@@ -67,7 +66,9 @@ button:hover {
 .slider {
     width: 50px;
     height: 25px;
-    background: lightgray;
+    margin-left: 10px;
+    margin-right: 10px;
+    background: rgb(89, 145, 255);
     border-radius: 25px;
     cursor: pointer;
     position: relative;
@@ -95,7 +96,6 @@ input:checked + .slider:before {
     left: 25px;
 }
 
-/* Tampilan hasil cuaca */
 .weather-result {
     margin-top: 20px;
     padding: 15px;
@@ -116,7 +116,6 @@ input:checked + .slider:before {
     color: #007BFF;
 }
 
-/* Menyesuaikan ikon cuaca */
 .weather-info {
     display: flex;
     justify-content: center;
@@ -125,7 +124,7 @@ input:checked + .slider:before {
 }
 
 .weather-info img {
-    width: 50px; /* Ukuran ikon lebih kecil */
+    width: 50px;
     height: auto;
     margin-right: 10px;
 }
