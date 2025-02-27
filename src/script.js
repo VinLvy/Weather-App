@@ -25,7 +25,7 @@ async function getWeather(location) {
     return {
         location: data.resolvedAddress,
         temperatureC: data.currentConditions.temp,
-        temperatureF: (data.currentConditions.temp * 9/5) + 32,
+        temperatureF: (data.currentConditions.temp * 9 / 5) + 32,
         condition: data.currentConditions.conditions,
         icon: data.currentConditions.icon
     };
@@ -35,11 +35,22 @@ function displayWeather(weather) {
     const unitToggle = document.getElementById("unitToggle");
     const temperature = unitToggle.checked ? `${weather.temperatureF.toFixed(1)} °F` : `${weather.temperatureC.toFixed(1)} °C`;
 
+    let iconFileName = "unknown.png";
+    if (weather.condition.includes("Sunny") || weather.condition.includes("Clear")) iconFileName = "sunny.png";
+    else if (weather.condition.includes("Cloudy") || weather.condition.includes("Partially Cloudy")) iconFileName = "cloudy.png";
+    else if (weather.condition.includes("Rain") || weather.condition.includes("Showers")) iconFileName = "rainy.png";
+    else if (weather.condition.includes("Thunderstorm")) iconFileName = "storm.png";
+    else if (weather.condition.includes("Snow")) iconFileName = "snowy.png";
+
+    const iconUrl = `../img/${iconFileName}`;
+
     document.getElementById("weatherDisplay").innerHTML = `
         <h2>${weather.location}</h2>
-        <p>${temperature}</p>
-        <p>${weather.condition}</p>
-        <img src="https://www.visualcrossing.com/img/icons/${weather.icon}.png" alt="${weather.condition}">
+        <p class="temp">${temperature}</p>
+        <div class="weather-info">
+            <img src="${iconUrl}" alt="${weather.condition}">
+            <p>${weather.condition}</p>
+        </div>
     `;
 
     changeBackground(weather.condition);
@@ -57,7 +68,7 @@ function getCurrentWeatherData() {
     return {
         location: weatherDisplay.querySelector("h2").innerText,
         temperatureC: parseFloat(weatherDisplay.querySelector("p").innerText),
-        temperatureF: parseFloat(weatherDisplay.querySelector("p").innerText) * 9/5 + 32,
+        temperatureF: parseFloat(weatherDisplay.querySelector("p").innerText) * 9 / 5 + 32,
         condition: weatherDisplay.querySelectorAll("p")[1].innerText,
         icon: weatherDisplay.querySelector("img").src.split("/").pop()
     };

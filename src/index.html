@@ -10,17 +10,21 @@
     <div class="container">
         <h1>Weather App</h1>
         <form id="weatherForm">
-            <input type="text" id="locationInput" placeholder="Enter location" required>
+            <input type="text" id="locationInput" placeholder="Enter location..." required>
             <button type="submit">Get Weather</button>
         </form>
+    
         <div id="loading">Loading...</div>
-        <div id="weatherDisplay"></div>
-        <label class="toggle">
+    
+        <div id="weatherDisplay" class="weather-result"></div>
+    
+        <div class="toggle">
+            <label>°C</label>
             <input type="checkbox" id="unitToggle">
-            <span class="slider"></span>
-            <p>°C / °F</p>
-        </label>
-    </div>
+            <label class="slider" for="unitToggle"></label>
+            <label>°F</label>
+        </div>
+    </div>    
     <script src="script.js"></script>
 </body>
 </html>
