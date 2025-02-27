@@ -1,4 +1,4 @@
-const apiKey = "T5BUYQ9GK65XWCEV365P2KTAD"; // Your API key Visual Crossing
+const apiKey = "YOUR_API_KEY"; // Your API key Visual Crossing
 
 let currentWeatherData = null;
 
